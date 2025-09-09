@@ -1,0 +1,30 @@
+{
+  "kind": "collectionType",
+  "collectionName": "limits",
+  "info": {
+    "singularName": "limit",
+    "pluralName": "limits",
+    "displayName": "Limit"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "variables_of_consumption": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::variables-of-consumption.variables-of-consumption",
+      "inversedBy": "limits"
+    },
+    "value": {
+      "type": "string"
+    },
+    "machine": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::machine.machine",
+      "inversedBy": "limits"
+    }
+  }
+}

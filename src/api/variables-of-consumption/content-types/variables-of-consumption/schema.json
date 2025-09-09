@@ -1,0 +1,34 @@
+{
+  "kind": "collectionType",
+  "collectionName": "variables_of_consumptions",
+  "info": {
+    "singularName": "variables-of-consumption",
+    "pluralName": "variables-of-consumptions",
+    "displayName": "VariablesOfConsumption"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "variable": {
+      "type": "enumeration",
+      "enum": [
+        "rotations",
+        "energy"
+      ]
+    },
+    "logs": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::log.log",
+      "mappedBy": "variables_of_consumption"
+    },
+    "limits": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::limit.limit",
+      "mappedBy": "variables_of_consumption"
+    }
+  }
+}

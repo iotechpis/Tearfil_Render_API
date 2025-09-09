@@ -1,0 +1,24 @@
+{
+  "kind": "collectionType",
+  "collectionName": "codes",
+  "info": {
+    "singularName": "code",
+    "pluralName": "codes",
+    "displayName": "code"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "code": {
+      "type": "string"
+    },
+    "machine": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::machine.machine",
+      "inversedBy": "codes"
+    }
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "kind": "collectionType",
+  "collectionName": "logs",
+  "info": {
+    "singularName": "log",
+    "pluralName": "logs",
+    "displayName": "Log"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "machine": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::machine.machine",
+      "inversedBy": "logs"
+    },
+    "variables_of_consumption": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::variables-of-consumption.variables-of-consumption",
+      "inversedBy": "logs"
+    },
+    "value": {
+      "type": "string"
+    },
+    "unity": {
+      "type": "enumeration",
+      "enum": [
+        "kWH",
+        "rpm"
+      ]
+    },
+    "date": {
+      "type": "date"
+    },
+    "time": {
+      "type": "time"
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "kind": "collectionType",
+  "collectionName": "machines",
+  "info": {
+    "singularName": "machine",
+    "pluralName": "machines",
+    "displayName": "Machine"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "object": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "card"
+      ]
+    },
+    "logs": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::log.log",
+      "mappedBy": "machine"
+    },
+    "warehouse": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::warehouse.warehouse",
+      "inversedBy": "machines"
+    },
+    "name": {
+      "type": "string"
+    },
+    "codes": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::code.code",
+      "mappedBy": "machine"
+    },
+    "limits": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::limit.limit",
+      "mappedBy": "machine"
+    }
+  }
+}

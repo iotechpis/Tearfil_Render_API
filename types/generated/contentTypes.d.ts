@@ -492,6 +492,7 @@ export interface ApiMachineMachine extends Struct.CollectionTypeSchema {
     >;
     perimeterROld: Schema.Attribute.Decimal;
     publishedAt: Schema.Attribute.DateTime;
+    thread: Schema.Attribute.Relation<'manyToOne', 'api::thread.thread'>;
     type: Schema.Attribute.Enumeration<['card']>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -500,6 +501,36 @@ export interface ApiMachineMachine extends Struct.CollectionTypeSchema {
       'manyToOne',
       'api::warehouse.warehouse'
     >;
+  };
+}
+
+export interface ApiThreadThread extends Struct.CollectionTypeSchema {
+  collectionName: 'threads';
+  info: {
+    displayName: 'Thread';
+    pluralName: 'threads';
+    singularName: 'thread';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::thread.thread'
+    > &
+      Schema.Attribute.Private;
+    machines: Schema.Attribute.Relation<'oneToMany', 'api::machine.machine'>;
+    name: Schema.Attribute.String;
+    ne: Schema.Attribute.Decimal;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
   };
 }
 
@@ -1087,6 +1118,7 @@ declare module '@strapi/strapi' {
       'api::limit.limit': ApiLimitLimit;
       'api::log.log': ApiLogLog;
       'api::machine.machine': ApiMachineMachine;
+      'api::thread.thread': ApiThreadThread;
       'api::variables-of-consumption.variables-of-consumption': ApiVariablesOfConsumptionVariablesOfConsumption;
       'api::warehouse.warehouse': ApiWarehouseWarehouse;
       'plugin::content-releases.release': PluginContentReleasesRelease;

@@ -56,6 +56,12 @@
     },
     "perimeterROld": {
       "type": "decimal"
+    },
+    "thread": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::thread.thread",
+      "inversedBy": "machines"
     }
   }
 }

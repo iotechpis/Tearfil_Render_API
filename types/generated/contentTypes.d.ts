@@ -490,6 +490,7 @@ export interface ApiMachineMachine extends Struct.CollectionTypeSchema {
       'images' | 'files' | 'videos' | 'audios',
       true
     >;
+    perimeterROld: Schema.Attribute.Decimal;
     publishedAt: Schema.Attribute.DateTime;
     type: Schema.Attribute.Enumeration<['card']>;
     updatedAt: Schema.Attribute.DateTime;

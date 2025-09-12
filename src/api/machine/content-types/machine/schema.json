@@ -53,6 +53,9 @@
       "relation": "oneToMany",
       "target": "api::limit.limit",
       "mappedBy": "machine"
+    },
+    "perimeterROld": {
+      "type": "decimal"
     }
   }
 }

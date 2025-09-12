@@ -437,7 +437,7 @@ export interface ApiLogLog extends Struct.CollectionTypeSchema {
     singularName: 'log';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
     createdAt: Schema.Attribute.DateTime;

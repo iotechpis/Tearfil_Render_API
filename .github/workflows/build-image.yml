@@ -1,0 +1,151 @@
+name: Build and Publish Docker Image to GitHub Container Registry
+
+on:
+  push:
+    branches: [ release, 'release*' ]
+
+jobs:
+  build-image:
+    runs-on: blacksmith-2vcpu-ubuntu-2404
+    permissions:
+      contents: read
+      packages: write
+    environment: ${{ github.ref == 'refs/heads/release' && 'production' || 'dev' }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set image tags
+        id: tags
+        run: |
+          # Short commit SHA
+          COMMIT_SHA=${GITHUB_SHA::7}
+
+          # Determine branch/tag name safely
+          if [[ "${GITHUB_REF}" == refs/heads/* ]]; then
+            BRANCH_TAG=${GITHUB_REF#refs/heads/}
+          elif [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            BRANCH_TAG=${GITHUB_REF#refs/tags/}
+          else
+            BRANCH_TAG=unknown
+          fi
+
+          # Sanitize repo, branch, and commit for Docker tags
+          SAFE_REPO=$(echo "${GITHUB_REPOSITORY##*/}" | tr '[:upper:]' '[:lower:]' | tr _ -)
+          SAFE_BRANCH=$(echo "$BRANCH_TAG" | tr '[:upper:]' '[:lower:]' | tr _ -)
+          SAFE_COMMIT=$(echo "$COMMIT_SHA" | tr '[:upper:]' '[:lower:]' | tr _ -)
+
+          echo "commit_sha=$SAFE_COMMIT" >> $GITHUB_OUTPUT
+          echo "branch_tag=$SAFE_BRANCH" >> $GITHUB_OUTPUT
+          echo "safe_repo=$SAFE_REPO" >> $GITHUB_OUTPUT
+
+          echo "Using tags: branch=$SAFE_BRANCH, commit=$SAFE_COMMIT, repo=$SAFE_REPO"
+
+      - name: Set up Docker Buildx
+        uses: useblacksmith/setup-docker-builder@v1
+
+      - name: Build and push Docker image
+        uses: useblacksmith/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/${{ steps.tags.outputs.safe_repo }}:${{ steps.tags.outputs.branch_tag }}
+            ghcr.io/${{ github.repository_owner }}/${{ steps.tags.outputs.safe_repo }}:${{ steps.tags.outputs.commit_sha }}
+            ghcr.io/${{ github.repository_owner }}/${{ steps.tags.outputs.safe_repo }}:latest
+          labels: |
+            org.opencontainers.image.revision=${{ steps.tags.outputs.commit_sha }}
+            org.opencontainers.image.source=${{ github.repository }}
+
+      - name: Trigger Komodo redeployment
+        if: always()
+        env:
+          KOMODO_URL: ${{ secrets.KOMODO_URL }}
+          KOMODO_API_KEY: ${{ secrets.KOMODO_API_KEY }}
+          KOMODO_API_SECRET: ${{ secrets.KOMODO_API_SECRET }}
+          KOMODO_STACK: ${{ vars.KOMODO_STACK }}
+        run: |
+          if [ -n "$KOMODO_URL" ] && [ -n "$KOMODO_API_KEY" ] && [ -n "$KOMODO_API_SECRET" ] && [ -n "$KOMODO_STACK" ]; then
+            echo "Calling Komodo API to trigger redeployment for stack: $KOMODO_STACK"
+            curl --location "${KOMODO_URL}/execute" \
+              --header "Content-Type: application/json" \
+              --header "X-API-KEY: ${KOMODO_API_KEY}" \
+              --header "X-API-SECRET: ${KOMODO_API_SECRET}" \
+              --data "{
+                \"type\": \"DeployStack\",
+                \"params\": {
+                  \"stack\": \"${KOMODO_STACK}\"
+                }
+              }"
+          else
+            echo "Required Komodo secrets are not set, skipping API call."
+          fi
+
+      - name: Rocket.Chat Notification
+        if: always()
+        uses: RocketChat/Rocket.Chat.GitHub.Action.Notification@master
+        with:
+          type: ${{ job.status }}
+          job_name: 'Build Docker Image'
+          channel: ${{ vars.ROCKET_CHAT_CHANNEL }}
+          url: ${{ secrets.ROCKET_CHAT_WEBHOOK }}
+          commit: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Prune old images for release (async)
+        env:
+          REPO: ${{ steps.tags.outputs.safe_repo }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH_TAG: ${{ steps.tags.outputs.branch_tag }}
+          KEEP: 5
+        run: |
+          echo "Fetching all package versions for pruning..."
+
+          ALL_VERSIONS=$(gh api \
+            -H "Accept: application/vnd.github+json" \
+            /orgs/${GITHUB_REPOSITORY_OWNER}/packages/container/${REPO}/versions \
+            --jq '.[] | {id: .id, tags: .metadata.container.tags}' || echo "")
+
+          if [ -z "$ALL_VERSIONS" ]; then
+            echo "No images found for pruning. Exiting."
+            exit 0
+          fi
+
+          # Filter out versions that have tags containing "release*" - we want to keep those
+          VERSIONS=$(echo "$ALL_VERSIONS" | jq -r 'select(.tags[] | contains("release") | not) | .id' || echo "")
+
+          if [ -z "$VERSIONS" ]; then
+            echo "No images found for pruning. Exiting."
+            exit 0
+          fi
+
+          COUNT=$(echo "$VERSIONS" | wc -l)
+          echo "Found $COUNT versions without 'release*' tags that can be pruned."
+
+          if [ "$COUNT" -le "$KEEP" ]; then
+            echo "Nothing to delete, keeping all versions."
+            exit 0
+          fi
+
+          # Get all versions except the most recent KEEP ones
+          TO_DELETE=$(echo "$VERSIONS" | tail -n +$((KEEP + 1)))
+          DELETE_COUNT=$(echo "$TO_DELETE" | wc -l)
+          echo "Will delete $DELETE_COUNT versions without 'release*' tags, keeping versions with 'release*' tags."
+
+          for ID in $TO_DELETE; do
+            echo "Deleting old package version $ID in background..."
+            gh api \
+              -X DELETE \
+              -H "Accept: application/vnd.github+json" \
+              /orgs/${GITHUB_REPOSITORY_OWNER}/packages/container/${REPO}/versions/$ID &
+          done
+
+          echo "Prune step launched in background, workflow continues..."

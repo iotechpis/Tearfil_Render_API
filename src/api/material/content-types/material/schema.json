@@ -1,0 +1,40 @@
+{
+  "kind": "collectionType",
+  "collectionName": "materials",
+  "info": {
+    "singularName": "material",
+    "pluralName": "materials",
+    "displayName": "Material"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "model": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "name": {
+      "type": "string"
+    },
+    "yarns": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::yarn.yarn",
+      "inversedBy": "materials"
+    },
+    "compose_fabrics": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::compose-fabric.compose-fabric",
+      "inversedBy": "materials"
+    }
+  }
+}

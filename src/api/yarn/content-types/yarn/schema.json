@@ -1,0 +1,42 @@
+{
+  "kind": "collectionType",
+  "collectionName": "yarns",
+  "info": {
+    "singularName": "yarn",
+    "pluralName": "yarns",
+    "displayName": "Yarn"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "spool": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::spool.spool",
+      "inversedBy": "yarn"
+    },
+    "strings": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::string.string",
+      "mappedBy": "yarn"
+    },
+    "compose_fabric": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::compose-fabric.compose-fabric",
+      "inversedBy": "yarns"
+    },
+    "materials": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::material.material",
+      "mappedBy": "yarns"
+    }
+  }
+}

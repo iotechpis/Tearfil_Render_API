@@ -399,6 +399,41 @@ export interface ApiCodeCode extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiComposeFabricComposeFabric
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'compose_fabrics';
+  info: {
+    displayName: 'ComposeFabric';
+    pluralName: 'compose-fabrics';
+    singularName: 'compose-fabric';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::compose-fabric.compose-fabric'
+    > &
+      Schema.Attribute.Private;
+    materials: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::material.material'
+    >;
+    name: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    yarns: Schema.Attribute.Relation<'oneToMany', 'api::yarn.yarn'>;
+  };
+}
+
 export interface ApiLimitLimit extends Struct.CollectionTypeSchema {
   collectionName: 'limits';
   info: {
@@ -437,7 +472,7 @@ export interface ApiLogLog extends Struct.CollectionTypeSchema {
     singularName: 'log';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
     createdAt: Schema.Attribute.DateTime;
@@ -490,7 +525,9 @@ export interface ApiMachineMachine extends Struct.CollectionTypeSchema {
       'images' | 'files' | 'videos' | 'audios',
       true
     >;
+    perimeterROld: Schema.Attribute.Decimal;
     publishedAt: Schema.Attribute.DateTime;
+    thread: Schema.Attribute.Relation<'manyToOne', 'api::thread.thread'>;
     type: Schema.Attribute.Enumeration<['card']>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -499,6 +536,142 @@ export interface ApiMachineMachine extends Struct.CollectionTypeSchema {
       'manyToOne',
       'api::warehouse.warehouse'
     >;
+  };
+}
+
+export interface ApiMaterialMaterial extends Struct.CollectionTypeSchema {
+  collectionName: 'materials';
+  info: {
+    displayName: 'Material';
+    pluralName: 'materials';
+    singularName: 'material';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    compose_fabrics: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::compose-fabric.compose-fabric'
+    >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::material.material'
+    > &
+      Schema.Attribute.Private;
+    model: Schema.Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios',
+      true
+    >;
+    name: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    yarns: Schema.Attribute.Relation<'manyToMany', 'api::yarn.yarn'>;
+  };
+}
+
+export interface ApiSpoolSpool extends Struct.CollectionTypeSchema {
+  collectionName: 'spools';
+  info: {
+    displayName: 'Spool';
+    pluralName: 'spools';
+    singularName: 'spool';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::spool.spool'> &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    spool: Schema.Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios',
+      true
+    >;
+    thread: Schema.Attribute.Relation<'manyToOne', 'api::thread.thread'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    weight: Schema.Attribute.Decimal;
+    yarn: Schema.Attribute.Relation<'oneToOne', 'api::yarn.yarn'>;
+  };
+}
+
+export interface ApiStringString extends Struct.CollectionTypeSchema {
+  collectionName: 'strings';
+  info: {
+    displayName: 'String';
+    pluralName: 'strings';
+    singularName: 'string';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    code: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::string.string'
+    > &
+      Schema.Attribute.Private;
+    material: Schema.Attribute.Enumeration<['cotton', 'polyester', 'nylon']>;
+    number: Schema.Attribute.Integer;
+    percentage: Schema.Attribute.Decimal;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    yarn: Schema.Attribute.Relation<'manyToOne', 'api::yarn.yarn'>;
+  };
+}
+
+export interface ApiThreadThread extends Struct.CollectionTypeSchema {
+  collectionName: 'threads';
+  info: {
+    displayName: 'Thread';
+    pluralName: 'threads';
+    singularName: 'thread';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::thread.thread'
+    > &
+      Schema.Attribute.Private;
+    machines: Schema.Attribute.Relation<'oneToMany', 'api::machine.machine'>;
+    name: Schema.Attribute.String;
+    ne: Schema.Attribute.Decimal;
+    publishedAt: Schema.Attribute.DateTime;
+    spools: Schema.Attribute.Relation<'oneToMany', 'api::spool.spool'>;
+    thread: Schema.Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios',
+      true
+    >;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
   };
 }
 
@@ -565,6 +738,41 @@ export interface ApiWarehouseWarehouse extends Struct.CollectionTypeSchema {
       'oneToOne',
       'plugin::users-permissions.user'
     >;
+  };
+}
+
+export interface ApiYarnYarn extends Struct.CollectionTypeSchema {
+  collectionName: 'yarns';
+  info: {
+    displayName: 'Yarn';
+    pluralName: 'yarns';
+    singularName: 'yarn';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    compose_fabric: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::compose-fabric.compose-fabric'
+    >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::yarn.yarn'> &
+      Schema.Attribute.Private;
+    materials: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::material.material'
+    >;
+    name: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    spool: Schema.Attribute.Relation<'oneToOne', 'api::spool.spool'>;
+    strings: Schema.Attribute.Relation<'oneToMany', 'api::string.string'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
   };
 }
 
@@ -1083,11 +1291,17 @@ declare module '@strapi/strapi' {
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
       'api::code.code': ApiCodeCode;
+      'api::compose-fabric.compose-fabric': ApiComposeFabricComposeFabric;
       'api::limit.limit': ApiLimitLimit;
       'api::log.log': ApiLogLog;
       'api::machine.machine': ApiMachineMachine;
+      'api::material.material': ApiMaterialMaterial;
+      'api::spool.spool': ApiSpoolSpool;
+      'api::string.string': ApiStringString;
+      'api::thread.thread': ApiThreadThread;
       'api::variables-of-consumption.variables-of-consumption': ApiVariablesOfConsumptionVariablesOfConsumption;
       'api::warehouse.warehouse': ApiWarehouseWarehouse;
+      'api::yarn.yarn': ApiYarnYarn;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;

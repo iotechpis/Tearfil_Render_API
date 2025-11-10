@@ -1,0 +1,43 @@
+{
+  "kind": "collectionType",
+  "collectionName": "spools",
+  "info": {
+    "singularName": "spool",
+    "pluralName": "spools",
+    "displayName": "Spool"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "thread": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::thread.thread",
+      "inversedBy": "spools"
+    },
+    "weight": {
+      "type": "decimal"
+    },
+    "spool": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "yarn": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::yarn.yarn",
+      "mappedBy": "spool"
+    }
+  }
+}

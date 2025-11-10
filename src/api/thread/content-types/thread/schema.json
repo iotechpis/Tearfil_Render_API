@@ -1,0 +1,43 @@
+{
+  "kind": "collectionType",
+  "collectionName": "threads",
+  "info": {
+    "singularName": "thread",
+    "pluralName": "threads",
+    "displayName": "Thread"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "ne": {
+      "type": "decimal"
+    },
+    "machines": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::machine.machine",
+      "mappedBy": "thread"
+    },
+    "name": {
+      "type": "string"
+    },
+    "thread": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "spools": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::spool.spool",
+      "mappedBy": "thread"
+    }
+  }
+}

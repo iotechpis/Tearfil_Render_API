@@ -1,0 +1,38 @@
+{
+  "kind": "collectionType",
+  "collectionName": "strings",
+  "info": {
+    "singularName": "string",
+    "pluralName": "strings",
+    "displayName": "String"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "code": {
+      "type": "string"
+    },
+    "percentage": {
+      "type": "decimal"
+    },
+    "yarn": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::yarn.yarn",
+      "inversedBy": "strings"
+    },
+    "material": {
+      "type": "enumeration",
+      "enum": [
+        "cotton",
+        "polyester",
+        "nylon"
+      ]
+    },
+    "number": {
+      "type": "integer"
+    }
+  }
+}

@@ -11,12 +11,6 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "code": {
-      "type": "string"
-    },
-    "percentage": {
-      "type": "decimal"
-    },
     "yarn": {
       "type": "relation",
       "relation": "manyToOne",
@@ -33,6 +27,12 @@
     },
     "number": {
       "type": "integer"
+    },
+    "colors": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::color.color",
+      "mappedBy": "string"
     }
   }
 }

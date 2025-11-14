@@ -399,6 +399,33 @@ export interface ApiCodeCode extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiColorColor extends Struct.CollectionTypeSchema {
+  collectionName: 'colors';
+  info: {
+    displayName: 'Color';
+    pluralName: 'colors';
+    singularName: 'color';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    code: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::color.color'> &
+      Schema.Attribute.Private;
+    percentage: Schema.Attribute.Decimal;
+    publishedAt: Schema.Attribute.DateTime;
+    string: Schema.Attribute.Relation<'manyToOne', 'api::string.string'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiComposeFabricComposeFabric
   extends Struct.CollectionTypeSchema {
   collectionName: 'compose_fabrics';
@@ -619,7 +646,7 @@ export interface ApiStringString extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
-    code: Schema.Attribute.String;
+    colors: Schema.Attribute.Relation<'oneToMany', 'api::color.color'>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -631,7 +658,6 @@ export interface ApiStringString extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     material: Schema.Attribute.Enumeration<['cotton', 'polyester', 'nylon']>;
     number: Schema.Attribute.Integer;
-    percentage: Schema.Attribute.Decimal;
     publishedAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -752,6 +778,7 @@ export interface ApiYarnYarn extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    chaos: Schema.Attribute.Decimal;
     compose_fabric: Schema.Attribute.Relation<
       'manyToOne',
       'api::compose-fabric.compose-fabric'
@@ -770,6 +797,7 @@ export interface ApiYarnYarn extends Struct.CollectionTypeSchema {
     publishedAt: Schema.Attribute.DateTime;
     spool: Schema.Attribute.Relation<'oneToOne', 'api::spool.spool'>;
     strings: Schema.Attribute.Relation<'oneToMany', 'api::string.string'>;
+    twist: Schema.Attribute.Decimal;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1291,6 +1319,7 @@ declare module '@strapi/strapi' {
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
       'api::code.code': ApiCodeCode;
+      'api::color.color': ApiColorColor;
       'api::compose-fabric.compose-fabric': ApiComposeFabricComposeFabric;
       'api::limit.limit': ApiLimitLimit;
       'api::log.log': ApiLogLog;

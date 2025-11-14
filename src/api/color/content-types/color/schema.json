@@ -1,0 +1,27 @@
+{
+  "kind": "collectionType",
+  "collectionName": "colors",
+  "info": {
+    "singularName": "color",
+    "pluralName": "colors",
+    "displayName": "Color"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "code": {
+      "type": "string"
+    },
+    "percentage": {
+      "type": "decimal"
+    },
+    "string": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::string.string",
+      "inversedBy": "colors"
+    }
+  }
+}

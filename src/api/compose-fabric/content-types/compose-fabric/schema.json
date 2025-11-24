@@ -28,6 +28,9 @@
       "relation": "manyToMany",
       "target": "api::material.material",
       "mappedBy": "compose_fabrics"
+    },
+    "twist": {
+      "type": "decimal"
     }
   }
 }

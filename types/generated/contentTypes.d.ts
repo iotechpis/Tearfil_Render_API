@@ -454,6 +454,7 @@ export interface ApiComposeFabricComposeFabric
     >;
     name: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
+    twist: Schema.Attribute.Decimal;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
